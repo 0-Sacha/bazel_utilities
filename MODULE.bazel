@@ -1,0 +1,13 @@
+###############################################################################
+# Bazel now uses Bzlmod by default to manage external dependencies.
+# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
+#
+# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+###############################################################################
+
+# buildifier: disable=module-docstring
+module(
+    name = "bazel_utilities",
+    version = "0.1",
+    repo_name = "com_sacha_bazel_utilities",
+)
