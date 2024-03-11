@@ -1,7 +1,7 @@
 "stm32_mcu_familly.bzl"
 
-load("//bazel_utilities:hosts.bzl", "default_localhost")
-load("//bazel_utilities/toolchains/arm_none_eabi:arm_none_eabi.bzl", "arm_none_eabi_toolchain")
+load("@bazel_utilities:hosts.bzl", "default_localhost")
+load("@bazel_utilities//toolchains/arm_none_eabi:arm_none_eabi.bzl", "arm_none_eabi_toolchain")
 
 ButilsSTM32ToolchainGeneratorInfo = provider("", fields = {
     'familly': "",
@@ -131,13 +131,13 @@ def stm32_toolchain(
 
         toolchain_mcu_constraint = [
             "@platforms//cpu:{}".format(arm_cpu_version),
-            "//bazel_utilities/platforms/stm32:{}".format(familly.lower()),
+            "@bazel_utilities//platforms/stm32:{}".format(familly.lower()),
         ]
 
         if gen_mcu_constraint:
             native.constraint_value(
                 name = mcu_id.lower(),
-                constraint_setting = "//bazel_utilities/platforms/stm32:stm32",
+                constraint_setting = "@bazel_utilities//platforms/stm32:stm32",
             )
 
             # buildifier: disable=list-append

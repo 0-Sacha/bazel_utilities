@@ -1,8 +1,8 @@
 "utils.bzl"
 
-load("//bazel_utilities:hosts.bzl", "default_localhost")
-load("//bazel_utilities/toolchains/arm_none_eabi:arm_none_eabi.bzl", "arm_none_eabi_toolchain")
-load("//bazel_utilities/tools/vscode:vscode_files.bzl", "butils_vscode_bazel_task")
+load("@bazel_utilities:hosts.bzl", "default_localhost")
+load("@bazel_utilities//toolchains/arm_none_eabi:arm_none_eabi.bzl", "arm_none_eabi_toolchain")
+load("@bazel_utilities//tools/vscode:vscode_files.bzl", "butils_vscode_bazel_task")
 load(":preconfig.bzl", "stm32_preconfig")
 
 stm32_hal_preconfig = stm32_preconfig(

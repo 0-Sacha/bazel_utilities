@@ -35,9 +35,9 @@ def _get_utilities_defines(platform_define_name):
         if platform_define_name != "":
             platform_define_name = platform_define_name + "_"
         utilities_defines += select({
-            "//bazel_utilities:Debug" : [ platform_define_name + "DEBUG" ],
-            "//bazel_utilities:Release" : [ platform_define_name + "RELEASE" ],
-            "//bazel_utilities:Dist" : [ platform_define_name + "DIST" ],
+            "@bazel_utilities:Debug" : [ platform_define_name + "DEBUG" ],
+            "@bazel_utilities:Release" : [ platform_define_name + "RELEASE" ],
+            "@bazel_utilities:Dist" : [ platform_define_name + "DIST" ],
         })
     return utilities_defines
 
