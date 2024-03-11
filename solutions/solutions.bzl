@@ -13,21 +13,26 @@ ProjectType = struct(
 # buildifier: disable=name-conventions
 SolutionProject = provider("", fields = {
     'name': "",
-    'path': "",
     'project_type': "",
     'platform_define_name': "",
+
     'hdrs': "",
     'srcs': "",
+
     'private_defines': "",
     'private_include_dirs': "",
     'private_deps': "",
-    'private_project_deps': "",
+    'private_projdeps': "",
+
     'defines': "",
     'include_dirs': "",
     'deps': "",
-    'project_deps': "",
+    'projdeps': "",
+
     'copts': "",
-    'linkopts': ""
+    'linkopts': "",
+    'compatible_with': "",
+    'exec_compatible_with': ""
 })
 
 def _get_utilities_defines(platform_define_name):
@@ -42,15 +47,15 @@ def _get_utilities_defines(platform_define_name):
         })
     return utilities_defines
 
-def _get_data_from_project_deps(project_deps):
+def _get_data_from_projdeps(projdeps):
     defines = []
     include_dirs = []
     deps = []
-    for projdeps in project_deps:
-        deps.append("//" + projdeps.path + ":" + projdeps.name)
-        defines += projdeps.defines
-        include_dirs += projdeps.include_dirs
-        deps += projdeps.deps
+    for projpath, projdata in projdeps:
+        deps.append(projpath + ":" + projdata.name)
+        defines += projdata.defines
+        include_dirs += projdata.include_dirs
+        deps += projdata.deps
     return defines, include_dirs, deps
 
 # buildifier: disable=function-docstring
@@ -63,20 +68,22 @@ def solution_project_info(
         private_defines = [],
         private_include_dirs = [],
         private_deps = [],
-        private_project_deps = [],
+        private_projdeps = [],
 
         defines = [],
         include_dirs = [],
         deps = [],
-        project_deps = [],
+        projdeps = [],
 
         copts = [],
         linkopts = [],
+        compatible_with = [],
+        exec_compatible_with = []
     ):
 
     utilities_defines = _get_utilities_defines(platform_define_name)
-    projdeps_defines, projdeps_include_dirs, projdeps_deps = _get_data_from_project_deps(project_deps)
-    private_projdeps_defines, private_projdeps_include_dirs, private_projdeps_deps = _get_data_from_project_deps(private_project_deps)
+    projdeps_defines, projdeps_include_dirs, projdeps_deps = _get_data_from_projdeps(projdeps)
+    private_projdeps_defines, private_projdeps_include_dirs, private_projdeps_deps = _get_data_from_projdeps(private_projdeps)
 
     return SolutionProject(
             name = name,
@@ -89,15 +96,17 @@ def solution_project_info(
             private_defines = private_defines + private_projdeps_defines,
             private_include_dirs = private_include_dirs + private_projdeps_include_dirs,
             private_deps = private_deps + private_projdeps_deps,
-            private_project_deps = private_project_deps,
+            private_projdeps = private_projdeps,
 
             defines = defines + utilities_defines + projdeps_defines,
             include_dirs = include_dirs + projdeps_include_dirs,
             deps = deps + projdeps_deps,
-            project_deps = project_deps,
+            projdeps = projdeps,
 
             copts = copts,
             linkopts = linkopts,
+            compatible_with = compatible_with,
+            exec_compatible_with = exec_compatible_with,
         )
 
 # buildifier: disable=function-docstring
@@ -116,6 +125,8 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
+            compatible_with = compatible_with,
+            exec_compatible_with = exec_compatible_with,
             visibility = ["//visibility:public"]
         )
     elif info.project_type == ProjectType.StaticLib:
@@ -128,6 +139,8 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
+            compatible_with = compatible_with,
+            exec_compatible_with = exec_compatible_with,
             visibility = ["//visibility:public"]
         )
     elif info.project_type == ProjectType.SharedLib:
@@ -141,6 +154,8 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
+            compatible_with = compatible_with,
+            exec_compatible_with = exec_compatible_with,
             visibility = ["//visibility:public"]
         )
     elif info.project_type == ProjectType.Test:
@@ -152,5 +167,7 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
+            compatible_with = compatible_with,
+            exec_compatible_with = exec_compatible_with,
             visibility = ["//visibility:public"]
         )
