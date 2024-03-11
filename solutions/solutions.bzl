@@ -22,12 +22,10 @@ SolutionProject = provider("", fields = {
     'private_defines': "",
     'private_include_dirs': "",
     'private_deps': "",
-    'private_projdeps': "",
 
     'defines': "",
     'include_dirs': "",
     'deps': "",
-    'projdeps': "",
 
     'copts': "",
     'linkopts': "",
@@ -67,12 +65,12 @@ def solution_project_info(
         private_defines = [],
         private_include_dirs = [],
         private_deps = [],
-        private_projdeps = [],
+        private_projdeps = {},
 
         defines = [],
         include_dirs = [],
         deps = [],
-        projdeps = [],
+        projdeps = {},
 
         copts = [],
         linkopts = [],
@@ -94,12 +92,10 @@ def solution_project_info(
             private_defines = private_defines + private_projdeps_defines,
             private_include_dirs = private_include_dirs + private_projdeps_include_dirs,
             private_deps = private_deps + private_projdeps_deps,
-            private_projdeps = private_projdeps,
 
             defines = defines + utilities_defines + projdeps_defines,
             include_dirs = include_dirs + projdeps_include_dirs,
             deps = deps + projdeps_deps,
-            projdeps = projdeps,
 
             copts = copts,
             linkopts = linkopts,
