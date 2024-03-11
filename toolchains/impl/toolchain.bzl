@@ -1,6 +1,6 @@
 "gen_toolchain.bzl"
 
-load("@bazel_utilities:hosts.bzl", "default_localhost")
+load("@bazel_utilities//:hosts.bzl", "default_localhost")
 load(":archives_registry.bzl", "register_archives_from_registry")
 load(":toolchain_config.bzl", "butils_toolchain_config_rule")
 load(":utils.bzl", "butils_get_toolchain_archive_prefix")
@@ -62,7 +62,7 @@ def butils_toolchain(
                 if toolchain_package.toolchain_registry.custom_localhost_name:
                     localhost_name = "{}localhost_name".format(toolchain_host_archive_prefix)
                 else:
-                    localhost_name = "@bazel_utilities:localhost_name"
+                    localhost_name = "@bazel_utilities//:localhost_name"
 
             toolchain_config_rule(
                 name = "config_{}".format(toolchain_identifier),

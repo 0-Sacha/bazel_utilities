@@ -1,7 +1,7 @@
 ""
 
 load("@local_config_platform//:constraints.bzl", "HOST_CONSTRAINTS")
-load("@bazel_utilities:hosts.bzl", "filegroup_archive_localhost", "filter_hosts_info", "get_current_localhost_name", "default_hosts")
+load("@bazel_utilities//:hosts.bzl", "filegroup_archive_localhost", "filter_hosts_info", "get_current_localhost_name", "default_hosts")
 load("@bazel_utilities//toolchains/impl:archives_registry.bzl", "archive_repository_name")
 load("@bazel_utilities//toolchains/impl:toolchain_registry.bzl", "get_full_version_label")
 load(":arm_none_eabi.bzl", "arm_none_eabi_registry")

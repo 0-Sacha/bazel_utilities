@@ -1,6 +1,6 @@
 """deps.bzl"""
 
-load("@bazel_utilities:hosts.bzl", "default_localhost")
+load("@bazel_utilities//:hosts.bzl", "default_localhost")
 
 load("@bazel_utilities//toolchains/impl:toolchain.bzl", "butils_toolchain")
 load("@bazel_utilities//toolchains/impl:toolchain_config.bzl", "butils_toolchain_config_rule")

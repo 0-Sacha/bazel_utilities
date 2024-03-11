@@ -23,20 +23,20 @@ build_configuration(
 config_setting(
     name = "Debug",
     flag_values  = {
-        "@bazel_utilities:config": "Debug",
+        "@bazel_utilities//:config": "Debug",
     }
 )
 
 config_setting(
     name = "Release",
     flag_values = {
-        "@bazel_utilities:config": "Release",
+        "@bazel_utilities//:config": "Release",
     }
 )
 
 config_setting(
     name = "Dist",
     flag_values = {
-        "@bazel_utilities:config": "Dist",
+        "@bazel_utilities//:config": "Dist",
     }
 )

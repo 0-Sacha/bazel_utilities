@@ -1,6 +1,6 @@
 "stm32_mcu_familly.bzl"
 
-load("@bazel_utilities:hosts.bzl", "default_localhost")
+load("@bazel_utilities//:hosts.bzl", "default_localhost")
 load("@bazel_utilities//toolchains/arm_none_eabi:arm_none_eabi.bzl", "arm_none_eabi_toolchain")
 
 ButilsSTM32ToolchainGeneratorInfo = provider("", fields = {

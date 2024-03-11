@@ -4,7 +4,7 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl", "action_config", "feature", "flag_group", "flag_set")
 
-load("@bazel_utilities:hosts.bzl", "ButilsHostNameInfo")
+load("@bazel_utilities//:hosts.bzl", "ButilsHostNameInfo")
 load(":utils.bzl", "butils_tool_path", "butils_get_toolchain_archive_prefix", "ButilsToolchainsFlagsInfo", "butils_concat_toolchain_flags")
 
 
