@@ -1,6 +1,6 @@
 "vscode_launch.bzl"
 
-load("//bazel_utilities/toolchains/impl:utils.bzl", "butils_tool_path")
+load("@bazel_utilities//toolchains/impl:utils.bzl", "butils_tool_path")
 load(":vscode_tasks.bzl", "ButilsVSCodeTaskInfo")
 
 ButilsVSCodeLaunchInfo = provider("", fields = {
