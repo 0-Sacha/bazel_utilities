@@ -89,13 +89,14 @@ def _all_files(name, binary, hosts_info = default_localhost, elf = None, bin = N
             exec_compatible_with = host_data.constraints,
         )
 
-ButilsToolchainGeneratorArmNoneEabiInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsToolchainGeneratorArmNoneEabi = provider("", fields = {
     'register': "",
     'gen': "",
     'all_files': "",
 })
 
-arm_none_eabi_toolchain = ButilsToolchainGeneratorArmNoneEabiInfo(
+arm_none_eabi_toolchain = ButilsToolchainGeneratorArmNoneEabi(
     register = _arm_none_eabi_toolchain.register,
     gen = _arm_none_eabi_toolchain.gen,
     all_files = _all_files,

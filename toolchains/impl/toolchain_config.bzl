@@ -4,9 +4,8 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl", "action_config", "feature", "flag_group", "flag_set")
 
-load("//bazel_utilities:hosts.bzl", "ButilsHostNameInfo")
-load(":utils.bzl", "butils_tool_path", "butils_get_toolchain_archive_prefix", "ButilsToolchainsFlagsInfo", "butils_concat_toolchain_flags")
-
+load("@bazel_utilities//:hosts.bzl", "ButilsHostNameInfo")
+load(":utils.bzl", "butils_tool_path", "butils_get_toolchain_archive_prefix", "ButilsToolchainsFlags", "butils_concat_toolchain_flags")
 
 ButilsToolchainConfigInfo = provider("", fields = {
     'name': "",
@@ -156,20 +155,20 @@ def _cc_feature_config(toolchains_flags):
     
     return features
 
-
-ButilsPrefixInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsPrefix = provider("", fields = {
     'defines': "",
     'includes': ""
 })
 
 def get_butils_prefix(cmd_linux_style = True):
     if cmd_linux_style:
-        return ButilsPrefixInfo(
+        return ButilsPrefix(
             defines = "-D",
             includes = "-I",
         )
     else:
-        return ButilsPrefixInfo(
+        return ButilsPrefix(
             defines = "/D",
             includes = "/I",
         )
@@ -194,7 +193,7 @@ def butils_toolchain_config_rule(toolchain_package):
         if toolchain_host_archive_prefix == "":
             toolchain_host_archive_prefix = butils_get_toolchain_archive_prefix(host_name = ctx.attr.host_name, toolchain_package = toolchain_package)
 
-        toolchain_formatted_flags = ButilsToolchainsFlagsInfo(
+        toolchain_formatted_flags = ButilsToolchainsFlags(
             copts = _format_list_config(toolchain_package.flags.copts, ctx, true_host_name),
             conlyopts = _format_list_config(toolchain_package.flags.conlyopts, ctx, true_host_name),
             cxxopts = _format_list_config(toolchain_package.flags.cxxopts, ctx, true_host_name),
@@ -225,7 +224,7 @@ def butils_toolchain_config_rule(toolchain_package):
         for define in utilities_defines:
             utilities_flags.append(prefix.defines + " " + define)
 
-        flags = ButilsToolchainsFlagsInfo(
+        flags = ButilsToolchainsFlags(
             copts = ctx.attr.copts + utilities_flags,
             conlyopts = ctx.attr.conlyopts,
             cxxopts = ctx.attr.cxxopts,

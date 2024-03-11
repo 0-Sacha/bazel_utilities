@@ -2,15 +2,16 @@
 
 load("//bazel_utilities:hosts.bzl", "default_localhost")
 load(":archives_registry.bzl", "register_archives_from_registry")
-load(":toolchain_config.bzl", "butils_toolchain_config_rule")
 load(":utils.bzl", "butils_get_toolchain_archive_prefix")
 
-ButilsToolchainGeneratorInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsToolchainGenerator = provider("", fields = {
     'register': "",
     'gen': ""
 })
 
-ButilsToolchainIdInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsToolchainId = provider("", fields = {
     'identifier': "",
     'host_name': "",
     'host_archive': "",
@@ -102,7 +103,7 @@ def butils_toolchain(
             )
 
             toolchain_ids.append(
-                ButilsToolchainIdInfo(
+                ButilsToolchainId(
                     identifier = toolchain_identifier,
                     host_name = host_name,
                     target_name = target_name,
@@ -112,7 +113,7 @@ def butils_toolchain(
             )
         return toolchain_ids
     
-    return ButilsToolchainGeneratorInfo(
+    return ButilsToolchainGenerator(
         register = _register,
         gen = _gen
     )

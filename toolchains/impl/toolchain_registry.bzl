@@ -1,9 +1,10 @@
 ""
 
 load(":archives_registry.bzl", "archive_repository_name", "get_full_version_label")
-load(":utils.bzl", "ButilsToolchainsFlagsInfo")
+load(":utils.bzl", "ButilsToolchainsFlags")
 
-ButilsToolchainRegistryInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsToolchainRegistry = provider("", fields = {
     'name': "",
     'registry': "",
 
@@ -25,7 +26,8 @@ ButilsToolchainRegistryInfo = provider("", fields = {
     'use_utilities_defines': ""
 })
 
-ButilsToolchainPackageInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsToolchainPackage = provider("", fields = {
     'version': "",
     'toolchain_registry': "",
     'archive_repository': "",
@@ -89,14 +91,14 @@ def butils_toolchain_registry(
         abi_version = abi_version
     )
 
-    flags = ButilsToolchainsFlagsInfo(
+    flags = ButilsToolchainsFlags(
         copts = copts,
         conlyopts = conlyopts,
         cxxopts = cxxopts,
         linkopts = linkopts
     )
 
-    return ButilsToolchainRegistryInfo(
+    return ButilsToolchainRegistry(
         name = name,
         registry = registry,
 
@@ -130,7 +132,7 @@ def _format_list_toolchain_package(list_, archive_details):
     return res
 
 def _toolchain_flags(flags, archive_details):
-    return ButilsToolchainsFlagsInfo(
+    return ButilsToolchainsFlags(
         copts = _format_list_toolchain_package(flags.copts, archive_details),
         conlyopts = _format_list_toolchain_package(flags.conlyopts, archive_details),
         cxxopts = _format_list_toolchain_package(flags.cxxopts, archive_details),
@@ -139,7 +141,7 @@ def _toolchain_flags(flags, archive_details):
 
 def butils_toolchain_package(toolchain_registry, version = "latest"):
     full_version_label = get_full_version_label(toolchain_registry, version)
-    return ButilsToolchainPackageInfo(
+    return ButilsToolchainPackage(
         version = full_version_label,
         toolchain_registry = toolchain_registry,
         archive_repository = archive_repository_name(host_name = "{host_name}", toolchain_registry = toolchain_registry, version = full_version_label),

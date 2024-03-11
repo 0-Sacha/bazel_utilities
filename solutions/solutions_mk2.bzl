@@ -9,7 +9,7 @@ ProjectType = struct(
     SharedLib = "SharedLib"
 )
 
-SolutionProjectInfo = provider("", fields = {
+SolutionProjectInfoInfo = provider("", fields = {
     'name': "",
     'path': "",
     'project_type': "",
@@ -140,7 +140,7 @@ def solution_project_build(
             linkopts = info.linkopts,
             visibility = ["//visibility:public"]
         )
-# TODO: Wait for Symbolic Macro Bazelv8
+# TODO: Wait for Symbolic Macro
 # This rule should do the build + the export of SolutionProjectInfo
 #
 #    solution_project = rule(

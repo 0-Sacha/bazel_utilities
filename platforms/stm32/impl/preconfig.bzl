@@ -1,6 +1,7 @@
 "preconfig.bzl"
 
-ButilsSTM32PreConfigInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsSTM32PreConfig = provider("", fields = {
     'copts': "",
     'conlyopts': "",
     'cxxopts': "",
@@ -13,7 +14,7 @@ def stm32_preconfig(
         cxxopts = [],
         linkopts = []
     ):
-    return ButilsSTM32PreConfigInfo(
+    return ButilsSTM32PreConfig(
         copts = copts,
         conlyopts = conlyopts,
         cxxopts = cxxopts,

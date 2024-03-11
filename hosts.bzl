@@ -2,45 +2,40 @@
 
 load("//bazel_utilities/tools:tools.bzl", "list_same_elements")
 
-ButilsHostsDataInfo = provider("", fields = {
-    'constraints': "",
-    'package_location': "",
+ButilsHostNameInfo = provider("", fields = {
+    'host_name': "",
+    'constraints': ""
 })
 
+def _impl_host_name(ctx):
+    return [
+        ButilsHostNameInfo(
+            host_name = ctx.attr.host_name,
+            constraints = ctx.attr.constraints,
+        )
+    ]
+
+butils_host = rule(
+    implementation = _impl_host_name,
+    attrs = {
+        'host_name': attr.string(mandatory = True),
+        'constraints': attr.string_list(default = []),
+    },
+    provides = [ButilsHostNameInfo]
+)
+
+
+# TODO: The following part is weird
 default_hosts = {
-    "windows_x86_64": ButilsHostsDataInfo(
-        constraints = [ "@platforms//os:windows", "@platforms//cpu:x86_64" ],
-        package_location = "//bazel_utilities"
-    ),
-    "windows_x86_32": ButilsHostsDataInfo(
-        constraints = [ "@platforms//os:windows", "@platforms//cpu:x86_32" ],
-        package_location = "//bazel_utilities"
-    ),
-    "windows_aarch64": ButilsHostsDataInfo(
-        constraints = [ "@platforms//os:windows", "@platforms//cpu:aarch64" ],
-        package_location = "//bazel_utilities"
-    ),
-    "linux_x86_64": ButilsHostsDataInfo(
-        constraints = [ "@platforms//os:linux", "@platforms//cpu:x86_64" ],
-        package_location = "//bazel_utilities"
-    ),
-    "linux_aarch64": ButilsHostsDataInfo(
-        constraints = [ "@platforms//os:linux", "@platforms//cpu:aarch64" ],
-        package_location = "//bazel_utilities"
-    ),
-    "darwin_x86_64": ButilsHostsDataInfo(
-        constraints = [ "@platforms//os:macos" ],
-        package_location = "//bazel_utilities"
-    )
+    "windows_x86_64": [ "@platforms//os:windows", "@platforms//cpu:x86_64" ],
+    "windows_x86_32": [ "@platforms//os:windows", "@platforms//cpu:x86_32" ],
+    "windows_aarch64": [ "@platforms//os:windows", "@platforms//cpu:aarch64" ],
+    "linux_x86_64": [ "@platforms//os:linux", "@platforms//cpu:x86_64" ],
+    "linux_aarch64": [ "@platforms//os:linux", "@platforms//cpu:aarch64" ],
+    "darwin_x86_64": [ "@platforms//os:macos" ]
 }
 
-# TODO: this shouldn't exists
-default_localhost = {
-    "localhost": ButilsHostsDataInfo(
-        constraints = [],
-        package_location = None
-    )
-}
+default_localhost = { "localhost": [] }
 
 # TODO:
 # buildifier: disable=function-docstring
@@ -104,25 +99,3 @@ def filegroup_archive_localhost(archive_prefix, package_name, toolchain_archive)
         visibility = ["//visibility:public"],
     )
     
-
-ButilsHostNameInfo = provider("", fields = {
-    'host_name': "",
-    'constraints': ""
-})
-
-def _impl_host_name(ctx):
-    return [
-        ButilsHostNameInfo(
-            host_name = ctx.attr.host_name,
-            constraints = ctx.attr.constraints,
-        )
-    ]
-
-butils_host = rule(
-    implementation = _impl_host_name,
-    attrs = {
-        'host_name': attr.string(mandatory = True),
-        'constraints': attr.string_list(default = []),
-    },
-    provides = [ButilsHostNameInfo]
-)

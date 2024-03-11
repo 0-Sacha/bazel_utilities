@@ -1,6 +1,7 @@
 ""
 
-BuildConfigurationInfo = provider("", fields = ['type'])
+# buildifier: disable=name-conventions
+BuildConfiguration = provider("", fields = ['type'])
 
 _available_build_configurations = ["Debug", "Release", "Dist"]
 
@@ -10,7 +11,7 @@ def _impl(ctx):
         fail(str(ctx.label) + " build setting allowed to take values {"
              + ", ".join(_available_build_configurations) + "} but was set to unallowed value "
              + raw_configuration)
-    return BuildConfigurationInfo(type = raw_configuration)
+    return BuildConfiguration(type = raw_configuration)
 
 build_configuration = rule(
     implementation = _impl,

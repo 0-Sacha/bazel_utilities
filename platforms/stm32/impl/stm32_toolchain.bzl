@@ -3,7 +3,8 @@
 load("//bazel_utilities:hosts.bzl", "default_localhost")
 load("//bazel_utilities/toolchains/arm_none_eabi:arm_none_eabi.bzl", "arm_none_eabi_toolchain")
 
-ButilsSTM32ToolchainGeneratorInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsSTM32ToolchainGenerator = provider("", fields = {
     'familly': "",
     'mcu_data': "",
     'register': "",
@@ -163,7 +164,7 @@ def stm32_toolchain(
             linkopts = linkopts
         )
 
-    return ButilsSTM32ToolchainGeneratorInfo(
+    return ButilsSTM32ToolchainGenerator(
         familly = familly.upper(),
         mcu_data = struct(
             arm_cpu_version = arm_cpu_version,

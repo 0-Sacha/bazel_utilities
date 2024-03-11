@@ -45,7 +45,8 @@ def butils_get_package_from_toolchain(package_name, host_name, toolchain):
         package_name = package_name
     )
 
-ButilsToolchainsFlagsInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+ButilsToolchainsFlags = provider("", fields = {
     'copts': "",
     'conlyopts': "",
     'cxxopts': "",
@@ -58,7 +59,7 @@ def butils_toolchain_flags(
         cxxopts = [],
         linkopts = [],
     ):
-    return ButilsToolchainsFlagsInfo(
+    return ButilsToolchainsFlags(
         copts = copts,
         conlyopts = conlyopts,
         cxxopts = cxxopts,
@@ -66,7 +67,7 @@ def butils_toolchain_flags(
     )   
 
 def butils_concat_toolchain_flags(a, b):
-    return ButilsToolchainsFlagsInfo(
+    return ButilsToolchainsFlags(
         copts = a.copts + b.copts,
         conlyopts = a.conlyopts + b.conlyopts,
         cxxopts = a.cxxopts + b.cxxopts,

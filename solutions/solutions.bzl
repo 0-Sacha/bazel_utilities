@@ -10,7 +10,8 @@ ProjectType = struct(
     Test = "Test"
 )
 
-SolutionProjectInfo = provider("", fields = {
+# buildifier: disable=name-conventions
+SolutionProject = provider("", fields = {
     'name': "",
     'path': "",
     'project_type': "",
@@ -77,7 +78,7 @@ def solution_project_info(
     projdeps_defines, projdeps_include_dirs, projdeps_deps = _get_data_from_project_deps(project_deps)
     private_projdeps_defines, private_projdeps_include_dirs, private_projdeps_deps = _get_data_from_project_deps(private_project_deps)
 
-    return SolutionProjectInfo(
+    return SolutionProject(
             name = name,
             path = path,
             project_type = project_type,
