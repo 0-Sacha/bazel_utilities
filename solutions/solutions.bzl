@@ -125,8 +125,8 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
-            compatible_with = compatible_with,
-            exec_compatible_with = exec_compatible_with,
+            compatible_with = info.compatible_with,
+            exec_compatible_with = info.exec_compatible_with,
             visibility = ["//visibility:public"]
         )
     elif info.project_type == ProjectType.StaticLib:
@@ -139,8 +139,8 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
-            compatible_with = compatible_with,
-            exec_compatible_with = exec_compatible_with,
+            compatible_with = info.compatible_with,
+            exec_compatible_with = info.exec_compatible_with,
             visibility = ["//visibility:public"]
         )
     elif info.project_type == ProjectType.SharedLib:
@@ -154,8 +154,8 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
-            compatible_with = compatible_with,
-            exec_compatible_with = exec_compatible_with,
+            compatible_with = info.compatible_with,
+            exec_compatible_with = info.exec_compatible_with,
             visibility = ["//visibility:public"]
         )
     elif info.project_type == ProjectType.Test:
@@ -167,7 +167,7 @@ def solution_project_build(
             deps = info.deps + info.private_deps,
             copts = info.copts,
             linkopts = info.linkopts,
-            compatible_with = compatible_with,
-            exec_compatible_with = exec_compatible_with,
+            compatible_with = info.compatible_with,
+            exec_compatible_with = info.exec_compatible_with,
             visibility = ["//visibility:public"]
         )
