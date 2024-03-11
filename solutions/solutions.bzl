@@ -61,7 +61,6 @@ def _get_data_from_projdeps(projdeps):
 # buildifier: disable=function-docstring
 def solution_project_info(
         name,
-        path = "",
         project_type = ProjectType.ConsoleApp,
         platform_define_name = None,
 
@@ -87,7 +86,6 @@ def solution_project_info(
 
     return SolutionProject(
             name = name,
-            path = path,
             project_type = project_type,
             platform_define_name = platform_define_name,
 
