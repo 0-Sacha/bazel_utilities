@@ -1,10 +1,10 @@
 "vscode_config.bzl"
 
-load("//bazel_utilities/toolchains/impl:utils.bzl", "butils_tool_path")
-load("//bazel_utilities/toolchains/impl:toolchain_config.bzl", "ButilsToolchainConfigInfo")
-load("//bazel_utilities/toolchains/impl:utils.bzl", "butils_get_toolchain_archive_prefix")
+load("@bazel_utilities//toolchains/impl:utils.bzl", "butils_tool_path")
+load("@bazel_utilities//toolchains/impl:toolchain_config.bzl", "ButilsToolchainConfigInfo")
+load("@bazel_utilities//toolchains/impl:utils.bzl", "butils_get_toolchain_archive_prefix")
 
-load("//bazel_utilities/tools:tools.bzl", "list_remove_duplicates", "flag_change_external_path")
+load("@bazel_utilities//tools:tools.bzl", "list_remove_duplicates", "flag_change_external_path")
 
 ButilsVSCodeConfigInfo = provider(fields = {
     "name": "",

@@ -1,6 +1,6 @@
 ""
 
-load("//bazel_utilities/toolchains/impl:utils.bzl", "butils_tool_path")
+load("@bazel_utilities//toolchains/impl:utils.bzl", "butils_tool_path")
 
 def _arm_all_files_impl(ctx):
     # buildifier: disable=print

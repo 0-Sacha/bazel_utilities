@@ -2,9 +2,9 @@
 
 load("@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl", "artifact_name_pattern")
 
-load("//bazel_utilities/toolchains/impl:toolchain.bzl", "butils_toolchain")
-load("//bazel_utilities/toolchains/impl:toolchain_config.bzl", "butils_toolchain_config_rule")
-load("//bazel_utilities/toolchains/impl:toolchain_registry.bzl", "butils_toolchain_registry", "butils_toolchain_package")
+load("@bazel_utilities//toolchains/impl:toolchain.bzl", "butils_toolchain")
+load("@bazel_utilities//toolchains/impl:toolchain_config.bzl", "butils_toolchain_config_rule")
+load("@bazel_utilities//toolchains/impl:toolchain_registry.bzl", "butils_toolchain_registry", "butils_toolchain_package")
 
 load(":MinGW_archives.bzl", "MINGW_ARCHIVES_REGISTRY")
 

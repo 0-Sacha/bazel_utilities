@@ -1,6 +1,6 @@
 "default_hosts.bzl"
 
-load("//bazel_utilities/tools:tools.bzl", "list_same_elements")
+load("@bazel_utilities//tools:tools.bzl", "list_same_elements")
 
 ButilsHostNameInfo = provider("", fields = {
     'host_name': "",

@@ -1,13 +1,13 @@
 ""
 
-load("//bazel_utilities/toolchains/impl:archives_registry.bzl", "gen_archives_registry")
+load("@bazel_utilities//toolchains/impl:archives_registry.bzl", "gen_archives_registry")
 
 ARM_NONE_EABI_ARCHIVES_13_2_REL1 = {
     "version": "13.2.rel1",
     "version-short": "13.2",
     "latest": True,
     "details": { "compiler_version": "13.2.1" },
-    "build_file": "//bazel_utilities/toolchains/arm_none_eabi:compiler.BUILD",
+    "build_file": "@bazel_utilities//toolchains/arm_none_eabi:compiler.BUILD",
     "archives": {
         "windows_x86_64": {
             "sha256": "51D933F00578AA28016C5E3C84F94403274EA7915539F8E56C13E2196437D18F",

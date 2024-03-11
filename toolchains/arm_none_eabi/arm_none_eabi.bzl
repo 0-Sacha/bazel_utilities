@@ -1,11 +1,11 @@
 """deps.bzl"""
 
-load("//bazel_utilities:hosts.bzl", "default_localhost")
+load("@bazel_utilities//:hosts.bzl", "default_localhost")
 
-load("//bazel_utilities/toolchains/impl:toolchain.bzl", "butils_toolchain")
-load("//bazel_utilities/toolchains/impl:toolchain_config.bzl", "butils_toolchain_config_rule")
-load("//bazel_utilities/toolchains/impl:toolchain_registry.bzl", "butils_toolchain_registry", "butils_toolchain_package")
-load("//bazel_utilities/toolchains/impl:utils.bzl", "butils_get_package_from_toolchain")
+load("@bazel_utilities//toolchains/impl:toolchain.bzl", "butils_toolchain")
+load("@bazel_utilities//toolchains/impl:toolchain_config.bzl", "butils_toolchain_config_rule")
+load("@bazel_utilities//toolchains/impl:toolchain_registry.bzl", "butils_toolchain_registry", "butils_toolchain_package")
+load("@bazel_utilities//toolchains/impl:utils.bzl", "butils_get_package_from_toolchain")
 
 load(":arm_all_files.bzl", "arm_all_files")
 load("arm_none_eabi_archives.bzl", "ARM_NONE_EABI_ARCHIVES_REGISTRY")
