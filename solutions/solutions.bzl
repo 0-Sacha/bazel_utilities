@@ -49,7 +49,7 @@ def _get_data_from_projdeps(projdeps):
     defines = []
     include_dirs = []
     deps = []
-    for projpath, projdata in projdeps:
+    for projpath, projdata in projdeps.items():
         deps.append(projpath + ":" + projdata.name)
         defines += projdata.defines
         include_dirs += projdata.include_dirs
