@@ -40,18 +40,18 @@ default_localhost = { "localhost": [] }
 # TODO:
 # buildifier: disable=function-docstring
 # buildifier: disable=unnamed-macro
-def host_platform(host_name, host_constraint):
+def host_platform(host_name, host_constraints):
     native.platform(
         name = host_name,
-        constraint_values = host_constraint,
+        constraint_values = host_constraints,
     )
 
 # TODO:
 # buildifier: disable=function-docstring
 # buildifier: disable=unnamed-macro
 def hosts_platform(hosts_info):
-    for host_name, host_data in hosts_info.items():
-        host_platform(host_name, host_data.constraints)
+    for host_name, host_constraints in hosts_info.items():
+        host_platform(host_name, host_constraints)
 
 # TODO:
 # buildifier: disable=function-docstring
@@ -71,8 +71,8 @@ def filter_hosts_name(host_name, hosts_info = default_hosts):
 # TODO:
 # buildifier: disable=function-docstring
 def get_current_localhost_name(localhost_constraints, hosts_info = default_hosts):
-    for host_name, host_data in hosts_info.items():
-        if list_same_elements(host_data.constraints, localhost_constraints):
+    for host_name, host_constraints in hosts_info.items():
+        if list_same_elements(host_constraints, localhost_constraints):
             return host_name
     # buildifier: disable=print
     print("get_current_localhost found no host than match requirements:\n")

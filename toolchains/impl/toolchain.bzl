@@ -52,7 +52,7 @@ def butils_toolchain(
         target_compatible_with = []
         ):
         toolchain_ids = []
-        for host_name, host_data in hosts_info.items():
+        for host_name, host_constraints in hosts_info.items():
             toolchain_host_archive_prefix = butils_get_toolchain_archive_prefix(host_name, toolchain_package)
             toolchain_identifier = toolchain_identifier_format.format(toolchain_package.toolchain_registry.name, host_name, target_name, target_cpu)
             # buildifier: disable=print
@@ -97,7 +97,7 @@ def butils_toolchain(
             native.toolchain(
                 name = "toolchain_{}".format(toolchain_identifier),
                 target_compatible_with = ctx_target_compatible_with + target_compatible_with,
-                exec_compatible_with = host_data.constraints,
+                exec_compatible_with = host_constraints,
                 toolchain = "cc_toolchain_{}".format(toolchain_identifier),
                 toolchain_type = "@bazel_tools//tools/cpp:toolchain_type"
             )

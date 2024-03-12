@@ -67,7 +67,7 @@ _arm_none_eabi_latest_config = butils_toolchain_config_rule(arm_none_eabi_latest
 arm_none_eabi_latest = butils_toolchain(arm_none_eabi_latest_package, _arm_none_eabi_latest_config)
 
 def _all_files(name, binary, hosts_info = default_localhost, elf = None, bin = None, hex = None):
-    for host_name, host_data in hosts_info.items():
+    for host_name, host_constraints in hosts_info.items():
         default_base_name = binary
         if binary[0] == ":":
             default_base_name = binary[1:]
@@ -86,7 +86,7 @@ def _all_files(name, binary, hosts_info = default_localhost, elf = None, bin = N
             elf = elf,
             bin = bin,
             hex = hex,
-            exec_compatible_with = host_data.constraints,
+            exec_compatible_with = host_constraints,
         )
 
 # buildifier: disable=name-conventions
