@@ -69,18 +69,20 @@ def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
     #     feature(name = "module_maps", enabled = True),
     # ]
 
-    features += [
-        feature(
-            name = "toolchain-verbose",
-            enabled = True,
-            flag_sets = [
-                flag_set(
-                    actions = get_verbose_toolchain_list(ctx.attr.verbose_steps),
-                    flag_groups = [ flag_group(flags = [ "-v" ]) ],
-                ),
-            ],
+    verbose_actions = get_verbose_toolchain_list(ctx.attr.verbose_steps)
+    if verbose_actions != []:
+        features.append(
+            feature(
+                name = "toolchain-verbose",
+                enabled = True,
+                flag_sets = [
+                    flag_set(
+                        actions = verbose_actions,
+                        flag_groups = [ flag_group(flags = [ "-v" ]) ],
+                    ),
+                ],
+            )
         )
-    ]
 
     ########## Assembler actions ##########
     features += [
