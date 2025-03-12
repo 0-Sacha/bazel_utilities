@@ -271,14 +271,14 @@ def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
     )
 
     ########## Toolchain Cliff ##########
-    # TODO: Test cliff (Never tested)
+    # TODO: Test cliff
     if ctx.attr.disable_cliff == False:
         features.append(
             feature(
                 name = "toolchain-clif-match",
                 flag_sets = [
                     flag_set(
-                        actions = TOOLCHAIN_ACTIONS.cliff_match,
+                        actions = TOOLCHAIN_ACTIONS.clif_match,
                         flag_groups = [],
                     ),
                 ],
@@ -865,60 +865,59 @@ def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
 
 
     ########## Runtime Lib ##########
-    ## TODO: Runtime Lib
-    ## if ctx.attr.disable_runtimelib == False:
-    ##     features.append(
-    ##         feature(
-    ##             name = "runtime_library_search_directories",
-    ##             flag_sets = [
-    ##                 flag_set(
-    ##                     actions = CC_ACTIONS.cc_link + CC_ACTIONS.,
-    ##                     flag_groups = [
-    ##                         flag_group(
-    ##                             iterate_over = "runtime_library_search_directories",
-    ##                             expand_if_available = "runtime_library_search_directories",
-    ##                             flag_groups = [
-    ##                                 flag_group(
-    ##                                     flags = [
-    ##                                         "-Xlinker",
-    ##                                         "-rpath",
-    ##                                         "-Xlinker",
-    ##                                         "@loader_path/%{runtime_library_search_directories}",
-    ##                                     ],
-    ##                                     expand_if_true = "is_cc_test",
-    ##                                 ),
-    ##                             ],
-    ##                         ),
-    ##                     ],
-    ##                     with_features = [
-    ##                         with_feature_set(features = ["static_link_cpp_runtimes"]),
-    ##                     ],
-    ##                 ),
-    ##                 flag_set(
-    ##                     actions = CC_ACTIONS.cc_link,
-    ##                     flag_groups = [
-    ##                         flag_group(
-    ##                             iterate_over = "runtime_library_search_directories",
-    ##                             expand_if_available = "runtime_library_search_directories",
-    ##                             flag_groups = [
-    ##                                 flag_group(
-    ##                                     flags = [
-    ##                                         "-Xlinker",
-    ##                                         "-rpath",
-    ##                                         "-Xlinker",
-    ##                                         "$ORIGIN/%{runtime_library_search_directories}",
-    ##                                     ],
-    ##                                 ),
-    ##                             ],
-    ##                         ),
-    ##                     ],
-    ##                     with_features = [
-    ##                         with_feature_set(not_features = ["static_link_cpp_runtimes"]),
-    ##                     ],
-    ##                 ),
-    ##             ],
-    ##         )
-    ##     )
+    if ctx.attr.disable_runtimelib == False:
+        features.append(
+            feature(
+                name = "runtime_library_search_directories",
+                flag_sets = [
+                    flag_set(
+                        actions = CC_ACTIONS.cc_link,
+                        flag_groups = [
+                            flag_group(
+                                iterate_over = "runtime_library_search_directories",
+                                expand_if_available = "runtime_library_search_directories",
+                                flag_groups = [
+                                    flag_group(
+                                        flags = [
+                                            "-Xlinker",
+                                            "-rpath",
+                                            "-Xlinker",
+                                            "@loader_path/%{runtime_library_search_directories}",
+                                        ],
+                                        expand_if_true = "is_cc_test",
+                                    ),
+                                ],
+                            ),
+                        ],
+                        with_features = [
+                            with_feature_set(features = ["static_link_cpp_runtimes"]),
+                        ],
+                    ),
+                    flag_set(
+                        actions = CC_ACTIONS.cc_link,
+                        flag_groups = [
+                            flag_group(
+                                iterate_over = "runtime_library_search_directories",
+                                expand_if_available = "runtime_library_search_directories",
+                                flag_groups = [
+                                    flag_group(
+                                        flags = [
+                                            "-Xlinker",
+                                            "-rpath",
+                                            "-Xlinker",
+                                            "$ORIGIN/%{runtime_library_search_directories}",
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                        with_features = [
+                            with_feature_set(not_features = ["static_link_cpp_runtimes"]),
+                        ],
+                    ),
+                ],
+            )
+        )
 
     ########## Interface Library ##########
     if ctx.attr.disable_interfacelib == False:
@@ -1032,6 +1031,24 @@ def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
             ],
         )
     ]
+
+    ########## Diagnostics File ##########
+    features.append(
+        feature(
+            name = "serialized_diagnostics_file",
+            flag_sets = [
+                flag_set(
+                    actions = CC_ACTIONS.cc_compile + CC_ACTIONS.cc_assemble,
+                    flag_groups = [
+                        flag_group(
+                            flags = ["--serialize-diagnostics", "%{serialized_diagnostics_file}"],
+                            expand_if_available = "serialized_diagnostics_file",
+                        ),
+                    ],
+                ),
+            ],
+        )
+    )
 
     ########## Strip ##########
     features.append(

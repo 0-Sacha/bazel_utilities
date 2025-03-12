@@ -122,7 +122,7 @@ TOOLCHAIN_ACTIONS = struct(
 
     strip = TOOLCHAIN_STRIP,
 
-    cliff_match = TOOLCHAIN_CLIFF_MATCH,
+    clif_match = TOOLCHAIN_CLIFF_MATCH,
 )
 
 

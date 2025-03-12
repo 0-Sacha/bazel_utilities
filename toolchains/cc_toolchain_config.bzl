@@ -18,7 +18,7 @@ load("//toolchains:tools_utils.bzl",
 
 load("//toolchains/toolchains_features:toolchains_features.bzl", "TOOLCHAINS_FEATURES")
 
-def toolchains_tools_actions_config(toolchain_tools):
+def toolchains_tools_actions_config(ctx, toolchain_tools):
     """Tools action config
 
     Args:
@@ -120,7 +120,7 @@ def toolchains_tools_actions_config(toolchain_tools):
         "cxx",
         [
             ACTION_NAMES.lto_indexing,
-            # TODO: add toolchain-lto-indexing to thoses actions
+            # Theses actions are already link to a tool
             # ACTION_NAMES.lto_index_for_executable,
             # ACTION_NAMES.lto_index_for_dynamic_library,
             # ACTION_NAMES.lto_index_for_nodeps_dynamic_library,
@@ -137,12 +137,13 @@ def toolchains_tools_actions_config(toolchain_tools):
     )
 
     ########## Cliff ##########
-    action_configs += link_actions_to_tool(
-        toolchain_tools,
-        "cxx",
-        [ ACTION_NAMES.clif_match ],
-        implies = [ "toolchain-clif-match" ],
-    )
+    if ctx.attr.disable_cliff == False:
+        action_configs += link_actions_to_tool(
+            toolchain_tools,
+            "cxx",
+            [ ACTION_NAMES.clif_match ],
+            implies = [ "toolchain-clif-match" ],
+        )
 
     ########## ObjC / ObjC++ ##########
     # DISCARDED: objc-compile [ ACTION_NAMES.objc_compile ]
@@ -173,7 +174,7 @@ def _impl_cc_toolchain_config(ctx):
         compiler = ctx.attr.compiler_type,
  
         features = TOOLCHAINS_FEATURES[ctx.attr.compiler_type](ctx, ctx.attr.compiler_type),
-        action_configs = toolchains_tools_actions_config(toolchain_tools),
+        action_configs = toolchains_tools_actions_config(ctx, toolchain_tools),
         tool_paths = toolchain_ctx_tool_paths(toolchain_paths),
 
         cxx_builtin_include_directories = ctx.attr.toolchain_builtin_includedirs + ctx.attr.toolchain_builtin_includedirs_extra,
@@ -229,12 +230,12 @@ cc_toolchain_config = rule(
 
         # Config:
         'disable_dynamiclink': attr.bool(default = False),
+        'disable_runtimelib': attr.bool(default = True),
+        'disable_interfacelib': attr.bool(default = True),
+        'disable_cliff': attr.bool(default = True),
         'disable_lto': attr.bool(default = False),
         'disable_fdo': attr.bool(default = False),
         'disable_cov': attr.bool(default = False),
-        'disable_cliff': attr.bool(default = False),
-        'disable_runtimelib': attr.bool(default = False),
-        'disable_interfacelib': attr.bool(default = False),
         'disable_sanitizers': attr.bool(default = False),
         'disable_pic': attr.bool(default = False),
 
