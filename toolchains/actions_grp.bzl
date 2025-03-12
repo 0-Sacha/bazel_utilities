@@ -100,6 +100,7 @@ TOOLCHAIN_CLIFF_MATCH = [
     ACTION_NAMES.clif_match,
 ]
 
+TOOLCHAIN_EVERYTHINGS = TOOLCHAIN_ASSEMBLE + TOOLCHAIN_COMPILE + TOOLCHAIN_COMPILE_HEADER_PARSING + TOOLCHAIN_LINK_DYNAMIC_LIB + TOOLCHAIN_LINK_EXE + TOOLCHAIN_ARCHIVE_STATIC_LIB + TOOLCHAIN_LTO_BACKEND + TOOLCHAIN_LTO_INDEXING + TOOLCHAIN_STRIP + TOOLCHAIN_CLIFF_MATCH
 
 TOOLCHAIN_ACTIONS = struct(
     assemble = TOOLCHAIN_ASSEMBLE,
@@ -123,6 +124,8 @@ TOOLCHAIN_ACTIONS = struct(
     strip = TOOLCHAIN_STRIP,
 
     clif_match = TOOLCHAIN_CLIFF_MATCH,
+
+    everythings = TOOLCHAIN_EVERYTHINGS,
 )
 
 
@@ -230,3 +233,16 @@ CC_ACTIONS = struct(
 
     cc_coverage = CC_COVERAGE,
 )
+
+def get_verbose_toolchain_list(verbose_steps):
+    actions = []
+    if "assemble" in verbose_steps:
+        actions = actions + TOOLCHAIN_ACTIONS.cc_assemble
+    if "compile" in verbose_steps:
+        actions = actions + TOOLCHAIN_ACTIONS.compile
+    if "link" in verbose_steps:
+        actions = actions + TOOLCHAIN_ACTIONS.link_exe + TOOLCHAIN_ACTIONS.link_dynamic_lib
+    if "strip" in verbose_steps:
+        actions = actions + TOOLCHAIN_ACTIONS.strip
+    return actions
+    

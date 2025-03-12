@@ -223,6 +223,8 @@ cc_toolchain_config = rule(
 
         'artifacts_patterns_packed' : attr.string_list(default = []),
         
+        'verbose_steps': attr.string_list(default = []),
+
         # TODO:
         'xflags_packed': attr.string_dict(default = {}),
         'enable_features': attr.string_list(default = []),
