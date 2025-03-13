@@ -181,6 +181,8 @@ def _impl_cc_toolchain_config(ctx):
 
         artifact_name_patterns = artifacts_patterns_unpack(ctx.attr.artifacts_patterns_packed),
 
+        builtin_sysroot = ctx.attr.builtin_sysroot,
+
         # Deprecated, Need default value
         abi_version = ctx.attr.abi_version,
         abi_libc_version = ctx.attr.abi_libc_version,
@@ -207,6 +209,8 @@ cc_toolchain_config = rule(
         # In case that path cause issue with the `-isystem` if it doesn't please prefer use of `toolchain_builtin_includedirs` to be able to compile in remote full enclosed env
         'toolchain_builtin_includedirs_extra': attr.string_list(default = []),
 
+        'builtin_sysroot': attr.string(),
+
         'copts': attr.string_list(default = []),
         'conlyopts': attr.string_list(default = []),
         'cxxopts': attr.string_list(default = []),
@@ -223,6 +227,8 @@ cc_toolchain_config = rule(
 
         'artifacts_patterns_packed' : attr.string_list(default = []),
         
+        'verbose_steps': attr.string_list(default = []),
+
         # TODO:
         'xflags_packed': attr.string_dict(default = {}),
         'enable_features': attr.string_list(default = []),

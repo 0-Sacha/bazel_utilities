@@ -15,7 +15,7 @@ load(
 )
 load("@rules_cc//cc:action_names.bzl", "ACTION_NAMES")
 
-load("//toolchains:actions_grp.bzl", "CC_ACTIONS", "TOOLCHAIN_ACTIONS")
+load("//toolchains:actions_grp.bzl", "CC_ACTIONS", "TOOLCHAIN_ACTIONS", "get_verbose_toolchain_list")
 
 def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
     """features for tools action config
@@ -68,6 +68,21 @@ def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
     #     feature(name = "only_doth_headers_in_module_maps"),
     #     feature(name = "module_maps", enabled = True),
     # ]
+
+    verbose_actions = get_verbose_toolchain_list(ctx.attr.verbose_steps)
+    if verbose_actions != []:
+        features.append(
+            feature(
+                name = "toolchain-verbose",
+                enabled = True,
+                flag_sets = [
+                    flag_set(
+                        actions = verbose_actions,
+                        flag_groups = [ flag_group(flags = [ "-v" ]) ],
+                    ),
+                ],
+            )
+        )
 
     ########## Assembler actions ##########
     features += [
@@ -170,7 +185,7 @@ def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
             flag_sets = [
                 flag_set(
                     actions = TOOLCHAIN_ACTIONS.link_exe,
-                    flag_groups = [],
+                    flag_groups = [ flag_group(flags = [ "" ]) ],
                 ),
             ],
         )
