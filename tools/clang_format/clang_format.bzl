@@ -45,7 +45,7 @@ def _execute_clang_format(ctx, file):
 
     return [ report_file, diff_file ]
 
-def _clang_format_impl(target, ctx):
+def _impl_clang_format(target, ctx):
     # Ignore if it's not a C/C++ target
     if not CcInfo in target:
         return []
@@ -78,7 +78,7 @@ def _clang_format_impl(target, ctx):
     ]
 
 clang_format = aspect(
-    implementation = _clang_format_impl,
+    implementation = _impl_clang_format,
     attrs = {
         "stop_at_error": attr.bool(default = False),
 

@@ -1,0 +1,26 @@
+{
+    "cSpell.words": [
+        "Bazel",
+        "clif",
+        "conlyopts",
+        "cxxopts",
+        "dynamiclink",
+        "filegroup",
+        "includedirs",
+        "interfacelib",
+        "isystem",
+        "libc",
+        "linkdirs",
+        "linklibs",
+        "linkopts",
+        "objc",
+        "objcopy",
+        "objdump",
+        "readelf",
+        "readobj",
+        "runtimelib",
+        "sandboxed",
+        "starlark",
+        "xflags"
+    ]
+}

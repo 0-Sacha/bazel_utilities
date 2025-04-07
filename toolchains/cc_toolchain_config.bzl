@@ -9,16 +9,17 @@ load("@rules_cc//cc:action_names.bzl", "ACTION_NAMES")
 load("//toolchains:artifacts.bzl", "artifacts_patterns_unpack")
 load("//toolchains:tools_utils.bzl",
     "link_actions_to_tool",
+    "toolchain_tool_path_from_paths",
+    "toolchain_path_from_tools",
     "toolchain_tools_from_paths",
-    "toolchain_tools_from_bins",
-    "toolchain_path_from_bins",
-    "toolchain_ctx_tool_paths",
+    "toolchain_tools_from_bins_path_label",
+    "toolchain_tools_from_bins_keyed",
 )
 # load("//toolchains:xflags.bzl", "xflags_unpack")
 
 load("//toolchains/toolchains_features:toolchains_features.bzl", "TOOLCHAINS_FEATURES")
 
-def toolchains_tools_actions_config(ctx, toolchain_tools):
+def toolchain_tools_actions_config(ctx, toolchain_tools):
     """Tools action config
 
     Args:
@@ -137,7 +138,7 @@ def toolchains_tools_actions_config(ctx, toolchain_tools):
     )
 
     ########## Cliff ##########
-    if ctx.attr.disable_cliff == False:
+    if ctx.attr.disable_clif == False:
         action_configs += link_actions_to_tool(
             toolchain_tools,
             "cxx",
@@ -153,20 +154,7 @@ def toolchains_tools_actions_config(ctx, toolchain_tools):
 
     return action_configs
 
-def _impl_cc_toolchain_config(ctx):
-    toolchain_bins_defined = len(ctx.attr.toolchain_bins) > 0
-    toolchain_paths_defined = len(ctx.attr.toolchain_paths) > 0
-
-    if (toolchain_bins_defined and toolchain_paths_defined) or (toolchain_bins_defined == False and toolchain_paths_defined == False):
-        fail("One and only one of 'toolchain_bins' and 'toolchain_paths' have to be set")
-
-    if toolchain_paths_defined != False:
-        toolchain_tools = toolchain_tools_from_paths(ctx.attr.toolchain_paths)
-        toolchain_paths = ctx.attr.toolchain_paths
-    else:
-        toolchain_tools = toolchain_tools_from_bins(ctx.attr.toolchain_bins, ctx.files.toolchain_bins)
-        toolchain_paths = toolchain_path_from_bins(ctx.attr.toolchain_bins, ctx.files.toolchain_bins)
-
+def _impl_create_cc_toolchain_config_info(ctx, toolchain_tools, toolchain_paths):
     return cc_common.create_cc_toolchain_config_info(
         ctx = ctx,
         toolchain_identifier = ctx.attr.toolchain_identifier,
@@ -174,8 +162,8 @@ def _impl_cc_toolchain_config(ctx):
         compiler = ctx.attr.compiler_type,
  
         features = TOOLCHAINS_FEATURES[ctx.attr.compiler_type](ctx, ctx.attr.compiler_type),
-        action_configs = toolchains_tools_actions_config(ctx, toolchain_tools),
-        tool_paths = toolchain_ctx_tool_paths(toolchain_paths),
+        action_configs = toolchain_tools_actions_config(ctx, toolchain_tools),
+        tool_paths = toolchain_tool_path_from_paths(toolchain_paths),
 
         cxx_builtin_include_directories = ctx.attr.toolchain_builtin_includedirs_isystem + ctx.attr.toolchain_builtin_includedirs,
 
@@ -188,21 +176,16 @@ def _impl_cc_toolchain_config(ctx):
         abi_libc_version = ctx.attr.abi_libc_version,
 
         # Deprecated, Need default value
-        target_cpu = "unknonwn",
-        target_libc = "unknonwn",
-        target_system_name = "unknonwn",
-        host_system_name = "unknonwn",
+        target_cpu = "unknown",
+        target_libc = "unknown",
+        target_system_name = "unknown",
+        host_system_name = "unknown",
     )
 
-cc_toolchain_config = rule(
-    implementation = _impl_cc_toolchain_config,
-    attrs = {
+_IMPL_ATTR_CC_TOOLCHAIN_CONFIG = {
         'toolchain_identifier': attr.string(mandatory = True),
 
         'compiler_type': attr.string(mandatory = True),
-
-        'toolchain_bins': attr.label_keyed_string_dict(mandatory = False, allow_files = True),
-        'toolchain_paths': attr.string_dict(mandatory = False),
 
         # Theses path are added to the `cxx_builtin_include_directories`.
         # In case theses path are not visible during remote/sandboxed build, you can use `toolchain_builtin_includedirs_isystem` that will add theses path to the toolchain arguments by using `-isystem`
@@ -238,17 +221,81 @@ cc_toolchain_config = rule(
         'disable_dynamiclink': attr.bool(default = False),
         'disable_runtimelib': attr.bool(default = True),
         'disable_interfacelib': attr.bool(default = True),
-        'disable_cliff': attr.bool(default = True),
+        'disable_clif': attr.bool(default = True),
         'disable_lto': attr.bool(default = False),
         'disable_fdo': attr.bool(default = False),
         'disable_cov': attr.bool(default = False),
         'disable_sanitizers': attr.bool(default = False),
         'disable_pic': attr.bool(default = False),
 
-        # Not really usefull, just forwarders
+        # Not really useful, just forwarders
         'abi_version': attr.string(default = "local"),
         'abi_libc_version': attr.string(default = "local")
-    },
+    }
+
+def _impl_cc_toolchain_config_path(ctx):
+    return _impl_create_cc_toolchain_config_info(ctx, toolchain_tools_from_paths(ctx.attr.toolchain_paths), ctx.attr.toolchain_paths)
+
+cc_toolchain_config_path = rule(
+    implementation = _impl_cc_toolchain_config_path,
+    attrs = dict(
+        _IMPL_ATTR_CC_TOOLCHAIN_CONFIG,
+        toolchain_paths = attr.string_dict(mandatory = True),
+    ),
+    fragments = ["cpp"],
+    provides = [CcToolchainConfigInfo],
+)
+
+def _impl_cc_toolchain_config_bins(ctx):
+    toolchain_tools = toolchain_tools_from_bins_path_label({
+        'cpp': ctx.file.cpp_bin,
+        'cc': ctx.file.cc_bin,
+        'cxx': ctx.file.cxx_bin,
+        'ar': ctx.file.ar_bin,
+        'as': ctx.file.as_bin,
+        'ld': ctx.file.ld_bin,
+
+        'strip': ctx.file.strip_bin,
+        
+        'cov': ctx.file.cov_bin,
+
+        'nm': ctx.file.nm_bin,
+        'objdump': ctx.file.objdump_bin,
+    })
+    return _impl_create_cc_toolchain_config_info(ctx, toolchain_tools, toolchain_path_from_tools(toolchain_tools))
+
+cc_toolchain_config_bins = rule(
+    implementation = _impl_cc_toolchain_config_bins,
+    attrs = dict(
+        _IMPL_ATTR_CC_TOOLCHAIN_CONFIG,
+        cpp_bin = attr.label(mandatory = True, allow_single_file = True),
+        cc_bin = attr.label(mandatory = True, allow_single_file = True),
+        cxx_bin = attr.label(mandatory = True, allow_single_file = True),
+        ar_bin = attr.label(mandatory = True, allow_single_file = True),
+        as_bin = attr.label(mandatory = True, allow_single_file = True),
+        ld_bin = attr.label(mandatory = True, allow_single_file = True),
+
+        strip_bin = attr.label(mandatory = True, allow_single_file = True),
+
+        cov_bin = attr.label(mandatory = True, allow_single_file = True),
+        nm_bin = attr.label(mandatory = True, allow_single_file = True),
+        objdump_bin = attr.label(mandatory = True, allow_single_file = True),
+    ),
+    fragments = ["cpp"],
+    provides = [CcToolchainConfigInfo],
+)
+
+##### Old version with label-key list #####
+def _impl_cc_toolchain_config_bins_keyed(ctx):
+    toolchain_tools = toolchain_tools_from_bins_keyed(ctx.attr.toolchain_bins, ctx.files.toolchain_bins)
+    return _impl_create_cc_toolchain_config_info(ctx, toolchain_tools, toolchain_path_from_tools(toolchain_tools))
+
+cc_toolchain_config_bins_keyed = rule(
+    implementation = _impl_cc_toolchain_config_bins_keyed,
+    attrs = dict(
+        _IMPL_ATTR_CC_TOOLCHAIN_CONFIG,
+        toolchain_bins = attr.label_keyed_string_dict(mandatory = True, allow_files = True),
+    ),
     fragments = ["cpp"],
     provides = [CcToolchainConfigInfo],
 )

@@ -25,6 +25,9 @@ TOOLCHAIN_BIN_TYPE = [
     "nm",
     "objdump",
     "dwp",
+    "readelf",
+    "readobj",
+    "strings",
 
     "dbg",
 ]
@@ -33,21 +36,6 @@ def compiler_tool_name(toolchain_bins_names, tool_type, default = None, fallback
     """Tool Name
 
     This function return the full tool name (including optionals prefix and extension) from its type and fallbacks
-    Tool types:
-        - cpp
-        - cc
-        - cxx
-        - cov
-
-        - ar
-        - ld
-        - nm
-        - objcopy
-        - objdump
-        - strip
-        - as
-        - size
-
     Args:
         toolchain_bins_names: The ctx toolchain_bins_names dict
         tool_type: The tool type 
@@ -92,10 +80,10 @@ def toolchain_bins_get_tool(toolchain_bins, tool_name):
             matchs.append(file)
 
     if len(matchs) == 0:
-        fail("Tool NOT Found : '{}' in {} !!".format(tool_name, toolchain_bins))
+        fail("Tool not found : '{}' in {} !".format(tool_name, toolchain_bins))
     
     if len(matchs) > 1:
-        print("Warrning: multiple Tool Found for {} !!. Keeping first one : {}".format(tool_name, matchs[0])) # buildifier: disable=print
+        fail("Multiple tool found for {} !".format(tool_name))
     return matchs[0]
 
 def _get_path_fixed(path):
@@ -134,37 +122,38 @@ def link_actions_to_tool(toolchain_tools, tool_type, action_names, **kwargs):
         )
     return action_configs
 
-def toolchain_tools_from_bins(toolchain_bins, toolchain_bins_paths):
-    """Create the toolchain's tools dict
+def toolchain_tool_path_from_paths(toolchain_paths):
+    """Create the toolchain's tool path array
 
     Args:
-        toolchain_bins: The rule context toolchain_bins dict
-        toolchain_bins_paths: The rule context toolchain_bins dict
+        toolchain_paths: The rule context toolchain_paths dict
+
+    Returns:
+        The toolchain's tool_paths list of tool_path
+    """
+    tool_paths = []
+    for name, path in toolchain_paths.items():
+        tool_paths.append(tool_path(name = name, path = path))
+    # Bazel Legacy toolchain's binaries
+    tool_paths.append(tool_path(name = "gcc", path = toolchain_paths["cc"]))
+    tool_paths.append(tool_path(name = "gcov", path = toolchain_paths["cov"]))
+    return tool_paths
+
+def toolchain_path_from_tools(toolchain_tools):
+    """Create the toolchain's path dict from the toolchain's tools
+
+    Args:
+        toolchain_tools: The toolchain_tools dict
 
     Returns:
         The toolchain's tools list
     """
-    toolchain_tools = {}
+    toolchain_paths = {}
+    for tool_type, tool_data in toolchain_tools.items():
+        toolchain_paths[tool_type] = _get_path_fixed(tool_data.tool.path)
+    return toolchain_paths
 
-    tool_index = 0
-
-    for _, tool_type in toolchain_bins.items():
-        if tool_type not in TOOLCHAIN_BIN_TYPE:
-            print("Toolchain binaries: not supported tool_type: {}".format(tool_type)) # buildifier: disable=print
-        
-        if tool_type in toolchain_tools:
-            print("Toolchain binaries: tool_type: {} already defined, Skipping".format(tool_type)) # buildifier: disable=print
-            continue
-        
-        toolchain_tools[tool_type] = struct(
-            type_name = "tool",
-            tool = toolchain_bins_paths[tool_index],
-        )
-
-        tool_index += 1
-
-    return toolchain_tools
-
+##### From ctx.attr.toolchain_paths #####
 def toolchain_tools_from_paths(toolchain_paths):
     """Create the toolchain's tools dict
 
@@ -175,49 +164,54 @@ def toolchain_tools_from_paths(toolchain_paths):
         The toolchain's tools list
     """
     toolchain_tools = {}
-
     for tool_type, tool_path in toolchain_paths.items():
-        if tool_type not in TOOLCHAIN_BIN_TYPE:
-            print("Toolchain binaries: not supported tool_type: {}".format(tool_type)) # buildifier: disable=print
-        
         if tool_type in toolchain_tools:
-            print("Toolchain binaries: tool_type: {} already defined, Skipping".format(tool_type)) # buildifier: disable=print
-            continue
-        
+            fail("Toolchain binaries: tool_type: {} already defined !".format(tool_type))
         toolchain_tools[tool_type] = tool(path = tool_path)
-
     return toolchain_tools
 
-def toolchain_path_from_bins(toolchain_bins, toolchain_bins_paths):
+##### From ctx.attr.toolchain_bins #####
+def toolchain_tools_from_bins_path_label(toolchain_paths):
+    toolchain_tools = {}
+    for tool_type, tool_path in toolchain_paths.items():
+        if tool_type in toolchain_tools:
+            fail("Toolchain binaries: tool_type: {} already defined !".format(tool_type))
+        toolchain_tools[tool_type] = struct(
+            type_name = "tool",
+            tool = tool_path,
+        )
+    return toolchain_tools
+
+def toolchain_tools_from_bins_keyed(toolchain_bins, toolchain_bins_paths):
     """Create the toolchain's tools dict
 
     Args:
         toolchain_bins: The rule context toolchain_bins dict
-        toolchain_bins_paths: toolchain_bins_paths
+        toolchain_bins_paths: The rule context toolchain_bins dict
 
     Returns:
         The toolchain's tools list
     """
-    toolchain_paths = {}
-    toolchain_tools = toolchain_tools_from_bins(toolchain_bins, toolchain_bins_paths)
-    for tool_type, tool_data in toolchain_tools.items():
-        toolchain_paths[tool_type] = _get_path_fixed(tool_data.tool.path)
-    return toolchain_paths
+    if len(toolchain_bins) != len(toolchain_bins_paths):
+        fail(
+            "Toolchain binaries: toolchain_bins({}) and toolchain_bins_paths({}) must have the same len ! Probably due to a tool being duplicated !\n\ntoolchain_bins:{}\n\ntoolchain_bins_paths:{}\n".format(
+                len(toolchain_bins),
+                len(toolchain_bins_paths),
+                toolchain_bins,
+                toolchain_bins_paths,
+            ))
 
-def toolchain_ctx_tool_paths(toolchain_paths):
-    """Create the toolchain's tools dict
+    toolchain_tools = {}
 
-    Args:
-        toolchain_paths: The rule context toolchain_paths dict
+    tool_index = 0
 
-    Returns:
-        The toolchain's tool_paths list of tool_path
-    """
+    for _, tool_type in toolchain_bins.items():
+        if tool_type in toolchain_tools:
+            fail("Toolchain binaries: tool_type: {} already defined !".format(tool_type))
+        toolchain_tools[tool_type] = struct(
+            type_name = "tool",
+            tool = toolchain_bins_paths[tool_index],
+        )
+        tool_index += 1
 
-    # Bazel Legacy toolchain's binaries
-    tool_paths = [ tool_path(name = name, path = path) for name, path in toolchain_paths.items() ]
-    tool_paths += [
-        tool_path(name = "gcc", path = toolchain_paths["cc"]),
-        tool_path(name = "gcov", path = toolchain_paths["cov"]),
-    ]
-    return tool_paths
+    return toolchain_tools
