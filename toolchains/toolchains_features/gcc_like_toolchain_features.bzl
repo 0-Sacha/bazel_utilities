@@ -286,8 +286,8 @@ def toolchains_tools_features_config_gcc_like(ctx, compiler_type):
     )
 
     ########## Toolchain Cliff ##########
-    # TODO: Test cliff
-    if ctx.attr.disable_cliff == False:
+    # TODO: Test clif
+    if ctx.attr.disable_clif == False:
         features.append(
             feature(
                 name = "toolchain-clif-match",

@@ -74,7 +74,7 @@ def _safe_flags(flags):
     # a clang toolchain configured (that would produce a good command line with --compiler clang)
     return [flag for flag in flags if flag not in COMPILER_FILTER_FLAGS]
 
-def _clang_tidy_impl(target, ctx):
+def _impl_clang_tidy(target, ctx):
     # Ignore if it's not a C/C++ target
     if not CcInfo in target:
         return []
@@ -114,7 +114,7 @@ def _clang_tidy_impl(target, ctx):
     ]
 
 clang_tidy = aspect(
-    implementation = _clang_tidy_impl,
+    implementation = _impl_clang_tidy,
     attrs = {
         "stop_at_error": attr.bool(default = False),
         "system_header_errors": attr.bool(default = False),
